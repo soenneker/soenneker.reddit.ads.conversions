@@ -44,6 +44,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.Reddit.Ads.OpenApiClientUtil" Version="4.0.2" />
+        <PackageReference Include="Soenneker.Reddit.Ads.OpenApiClientUtil" Version="4.0.3" />
     </ItemGroup>
 </Project>
