@@ -27,7 +27,7 @@ public sealed class ConversionPayloadTests
     }
 
     [Test]
-    public async Task Sends_conversion_envelope_and_preserves_deduplication_id()
+    public async ValueTask Sends_conversion_envelope_and_preserves_deduplication_id()
     {
         var handler = new RecordingHandler();
         using var http = new HttpClient(handler);
@@ -59,7 +59,7 @@ public sealed class ConversionPayloadTests
     [Test]
     [Arguments(0)]
     [Arguments(1001)]
-    public async Task Rejects_invalid_batch_sizes_before_obtaining_client(int count)
+    public async ValueTask Rejects_invalid_batch_sizes_before_obtaining_client(int count)
     {
         var conversions = new RedditAdsConversions(new UnusedClient());
         try
@@ -80,7 +80,7 @@ public sealed class ConversionPayloadTests
     }
 
     [Test]
-    public async Task Cancellation_prevents_obtaining_client()
+    public async ValueTask Cancellation_prevents_obtaining_client()
     {
         var conversions = new RedditAdsConversions(new UnusedClient());
         using var cancellation = new CancellationTokenSource();
