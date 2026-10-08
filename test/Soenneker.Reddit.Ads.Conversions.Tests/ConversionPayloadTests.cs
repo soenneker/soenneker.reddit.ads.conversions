@@ -27,7 +27,7 @@ public sealed class ConversionPayloadTests
     }
 
     [Test]
-    public async ValueTask Sends_conversion_envelope_and_preserves_deduplication_id()
+    public async ValueTask Sends_conversion_envelope_and_preserves_deduplication_id(CancellationToken cancellationToken)
     {
         var handler = new RecordingHandler();
         using var http = new HttpClient(handler);
@@ -40,7 +40,7 @@ public sealed class ConversionPayloadTests
         conversion.Metadata!.Value = 42.5;
         conversion.Metadata.Currency = "USD";
         conversion.ClickId = "click-123";
-        var response = await conversions.Send("pixel-123", conversion, testId: "test-123");
+        var response = await conversions.Send("pixel-123", conversion, testId: "test-123", cancellationToken: cancellationToken);
         using var json = JsonDocument.Parse(handler.Body!);
         var data = json.RootElement.GetProperty("data");
         var item = data.GetProperty("events")[0];
@@ -59,12 +59,12 @@ public sealed class ConversionPayloadTests
     [Test]
     [Arguments(0)]
     [Arguments(1001)]
-    public async ValueTask Rejects_invalid_batch_sizes_before_obtaining_client(int count)
+    public async ValueTask Rejects_invalid_batch_sizes_before_obtaining_client(int count, CancellationToken cancellationToken)
     {
         var conversions = new RedditAdsConversions(new UnusedClient());
         try
         {
-            await conversions.SendBatch("pixel", new ComponentsSchemaPixelConversionEvent[count]);
+            await conversions.SendBatch("pixel", new ComponentsSchemaPixelConversionEvent[count], cancellationToken: cancellationToken);
         }
         catch (ArgumentOutOfRangeException) { return; }
         throw new Exception("Expected batch-size validation.");
@@ -80,7 +80,7 @@ public sealed class ConversionPayloadTests
     }
 
     [Test]
-    public async ValueTask Cancellation_prevents_obtaining_client()
+    public async ValueTask Cancellation_prevents_obtaining_client(CancellationToken cancellationToken)
     {
         var conversions = new RedditAdsConversions(new UnusedClient());
         using var cancellation = new CancellationTokenSource();
